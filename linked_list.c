@@ -1,25 +1,25 @@
 #include "linked_list.h"
+#include "memory_manager.h"
 
 
 void list_init(Node** head, size_t size) {
-    if (head == NULL || size == 0) {
+    // Check if head is NULL or size is 0
+    if (head == NULL) {
+        return;
+    }
+    
+    if (size == 0) {
+        *head = NULL;
         return;
     }
     
     *head = (Node*)mem_alloc(size * sizeof(Node));
-    if (*head == NULL) {
-        fprintf(stderr,"Failed to allocate memory for head node");
-        exit(EXIT_FAILURE);
-    }
 }
 
 void list_insert(Node **head, uint16_t data)
 {
     Node* new_node = (Node*)mem_alloc(sizeof(Node));
-    if(new_node == NULL){
-        fprintf(stderr,"Failed to create Node");
-        exit(EXIT_FAILURE);
-    }
+
     new_node->data = data;
     new_node->next = NULL;
 }
@@ -27,10 +27,7 @@ void list_insert(Node **head, uint16_t data)
 void list_insert_after(Node *prev_node, uint16_t data)
 {
     Node* new_node = (Node*)mem_alloc(sizeof(Node));
-    if(new_node == NULL){
-        fprintf(stderr,"Failed to create Node");
-        exit(EXIT_FAILURE);
-    }
+
     new_node->data = data;
     new_node->next = prev_node->next;
     prev_node->next = new_node;
@@ -43,10 +40,6 @@ void list_insert_before(Node **head, Node *next_node, uint16_t data)
     }
 
     Node* new_node = (Node*)mem_alloc(sizeof(Node));
-    if(new_node == NULL){
-        fprintf(stderr,"Failed to create Node");
-        exit(EXIT_FAILURE);
-    }
     if (*head == next_node) {
         new_node->next = *head;
         *head = new_node;
