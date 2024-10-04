@@ -52,28 +52,31 @@ void mem_init(size_t size) {
 
 void *mem_alloc(size_t size) {
     struct memblock *current = metadata_;
-    if(totmemused_ + size > memsize_){
-        return NULL;
+
+    if(size == 0){
+          return (void*)((char*)current + sizeof(struct memblock));
     }
 
+    size_t total_size = size + sizeof(struct memblock);
+
+    if (totmemused_ + size > memsize_) {
+        return NULL;
+    }
+    
 
     while (current != NULL) {
-        if (current->is_free && current->size >= size + sizeof(struct memblock)) {
-            
-            if (current->size >= size + 2 * sizeof(struct memblock)) {
-                struct memblock *new_block = (struct memblock*)((char*)current + sizeof(struct memblock) + size);
+        if (current->is_free && current->size >= size) {
+            struct memblock *new_block = (struct memblock*)((char*)current + total_size);
+            new_block->size = current->size - size; 
+            new_block->is_free = true;
+            new_block->next = current->next;
 
-                new_block->size = current->size - size - sizeof(struct memblock);
-                new_block->is_free = true;
-                new_block->next = current->next;
-                
-                current->next = new_block;
-            }
-            
+            current->next = new_block;
             current->size = size;
             current->is_free = false;
-            totmemused_ += size;
+            totmemused_ += size; 
 
+           
             return (void*)((char*)current + sizeof(struct memblock));
         }
         current = current->next;
@@ -87,7 +90,6 @@ void mem_free(void *block) {
         return;
     }
     struct memblock *current = (struct memblock*)((char*)block - sizeof(struct memblock));
-    printf("in free: Current block size: %zu, is_free: %d\n", current->size, current->is_free);
     totmemused_ -= current->size;
     current->is_free = true;
 
