@@ -1,9 +1,8 @@
 #include "linked_list.h"
 #include "memory_manager.h"
 
-
 void list_init(Node** head, size_t size) {
-    // Check if head is NULL or size is 0
+    mem_init(size);
     if (head == NULL) {
         return;
     }
@@ -13,15 +12,34 @@ void list_init(Node** head, size_t size) {
         return;
     }
     
-    *head = (Node*)mem_alloc(size * sizeof(Node));
+    //*head = (Node*)mem_alloc(sizeof(Node));
 }
 
-void list_insert(Node **head, uint16_t data)
-{
+void list_insert(Node **head, uint16_t data) {
+  
     Node* new_node = (Node*)mem_alloc(sizeof(Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
 
-    new_node->data = data;
-    new_node->next = NULL;
+    new_node->data = data; 
+    new_node->next = NULL;  
+    printf("new node contains data: %d\n", data);
+    
+    if (*head == NULL) {
+        *head = new_node;
+        return;
+    }
+
+    
+    Node* current = *head;
+    while (current->next != NULL) {
+        current = current->next; 
+    }
+
+   
+    current->next = new_node;
 }
 
 void list_insert_after(Node *prev_node, uint16_t data)
@@ -147,7 +165,7 @@ void list_cleanup(Node **head) {
 
     while (current != NULL) {
         next_node = current->next;
-        free(current);
+        mem_free(current);
         current = next_node;
     }
 

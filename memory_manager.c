@@ -37,7 +37,7 @@ void mem_init(size_t size) {
 
     memory_ = malloc(size + (100*sizeof(struct memblock)));
     if (memory_ == NULL) {
-        fprintf(stderr, "Failed to allocate memory.\n");
+        fprintf(stderr, "Failed to allocate memory in mem_init.\n");
         return;
     }
     
@@ -51,6 +51,7 @@ void mem_init(size_t size) {
 }
 
 void *mem_alloc(size_t size) {
+    printf("mem_alloc Called\n");
     struct memblock *current = metadata_;
 
     if(size == 0){
@@ -60,6 +61,7 @@ void *mem_alloc(size_t size) {
     size_t total_size = size + sizeof(struct memblock);
 
     if (totmemused_ + size > memsize_) {
+        printf("mem_alloc: mem full\n");
         return NULL;
     }
     
@@ -76,11 +78,12 @@ void *mem_alloc(size_t size) {
             current->is_free = false;
             totmemused_ += size; 
 
-           
+           printf("mem_alloc: should be fine\n");
             return (void*)((char*)current + sizeof(struct memblock));
         }
         current = current->next;
     }
+    printf("something went bad\n");
     return NULL;
 }
 

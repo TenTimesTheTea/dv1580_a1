@@ -23,7 +23,7 @@ void capture_stdout(char *buffer, size_t size, void (*func)(Node **, Node *, Nod
     }
 
     // Redirect stdout to the temporary file
-    stdout = fp;
+    //stdout = fp;
 
     // Call the function whose output we want to capture
     func(head, start_node, end_node);
@@ -42,7 +42,7 @@ void capture_stdout(char *buffer, size_t size, void (*func)(Node **, Node *, Nod
     fclose(fp);
 
     // Restore the original stdout
-    stdout = original_stdout;
+    //stdout = original_stdout;
 }
 
 // ********* Test basic linked list operations *********
