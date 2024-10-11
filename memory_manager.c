@@ -85,11 +85,12 @@ void *mem_resize(void *block, size_t size) {
         return block;
     }
 
-    if(current->size > size) {
+    if(current->size < size) {
         if(current->next != NULL && current->next->is_free && current->next->size + current->size + sizeof(struct memblock) >= size)
         current->size += current->next->size + sizeof(struct memblock);
+
     }
-    if(current->size < size) {
+    if(current->size > size) {
 
     }
 }
